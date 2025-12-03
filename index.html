@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Futebol</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">🌓</button>
+    
+    <!-- Tela de Login -->
+    <div id="login-screen" class="screen active">
+        <div class="container">
+            <div class="login-header">
+                <div class="soccer-icon">⚽</div>
+                <h1>Quiz de Futebol</h1>
+                <p class="subtitle">Teste seus conhecimentos sobre o mundo da bola</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="username">
+                    <span class="label-icon">👤</span>
+                    Nome de Usuário
+                </label>
+                <input type="text" id="username" placeholder="Digite seu nome" maxlength="20">
+            </div>
+            
+            <div class="difficulty-selector">
+                <label>Escolha a dificuldade:</label>
+                <div class="difficulty-buttons">
+                    <button class="difficulty-btn active" data-difficulty="facil">
+                        <span class="diff-emoji">😊</span>
+                        Fácil
+                    </button>
+                    <button class="difficulty-btn" data-difficulty="medio">
+                        <span class="diff-emoji">🤔</span>
+                        Médio
+                    </button>
+                    <button class="difficulty-btn" data-difficulty="dificil">
+                        <span class="diff-emoji">🔥</span>
+                        Difícil
+                    </button>
+                </div>
+            </div>
+            
+            <div class="category-selector">
+                <label>Escolha a categoria:</label>
+                <select id="category-select">
+                    <option value="todas">Todas as Categorias</option>
+                    <option value="geral">Geral</option>
+                    <option value="copas">Copas do Mundo</option>
+                    <option value="times">Times</option>
+                    <option value="jogadores">Jogadores</option>
+                </select>
+            </div>
+            
+            <button class="btn btn-primary" onclick="login()">Começar Quiz</button>
+            <button class="btn btn-secondary" onclick="showInstructions()">Como Jogar</button>
+            <button class="btn btn-secondary" onclick="showStats()">Ver Estatísticas</button>
+        </div>
+    </div>
+
+    <!-- Tela de Instruções -->
+    <div id="instructions-screen" class="screen">
+        <div class="container">
+            <h1>📖 Como Jogar</h1>
+            <div class="instructions-content">
+                <div class="instruction-item">
+                    <span class="instruction-number">1</span>
+                    <div>
+                        <h3>Cadastre-se</h3>
+                        <p>Digite seu nome e escolha a dificuldade e categoria do quiz</p>
+                    </div>
+                </div>
+                <div class="instruction-item">
+                    <span class="instruction-number">2</span>
+                    <div>
+                        <h3>Responda as Questões</h3>
+                        <p>Você terá tempo limitado para cada pergunta. Escolha a resposta correta!</p>
+                    </div>
+                </div>
+                <div class="instruction-item">
+                    <span class="instruction-number">3</span>
+                    <div>
+                        <h3>Sistema de Vidas</h3>
+                        <p>Você tem 3 vidas. Cada erro remove uma vida. Sem vidas, o jogo acaba!</p>
+                    </div>
+                </div>
+                <div class="instruction-item">
+                    <span class="instruction-number">4</span>
+                    <div>
+                        <h3>Pontuação</h3>
+                        <p>Ganhe pontos por cada acerto. Quanto mais rápido responder, mais pontos ganha!</p>
+                    </div>
+                </div>
+                <div class="instruction-item">
+                    <span class="instruction-number">5</span>
+                    <div>
+                        <h3>Ranking</h3>
+                        <p>Compita com outros jogadores e chegue ao topo do ranking!</p>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="showScreen('login-screen')">Voltar</button>
+        </div>
+    </div>
+
+    <!-- Tela do Quiz -->
+    <div id="quiz-screen" class="screen">
+        <div class="container">
+            <div class="quiz-header">
+                <div class="user-info">
+                    <span id="current-user">Jogador: </span>
+                    <span id="current-difficulty" class="difficulty-badge">Fácil</span>
+                </div>
+                <div class="lives-container">
+                    <span class="lives-label">Vidas:</span>
+                    <span id="lives-display">❤️❤️❤️</span>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <span id="question-counter" class="question-counter">1/10</span>
+            </div>
+            
+            <div class="timer-container">
+                <div class="timer-circle">
+                    <svg width="80" height="80">
+                        <circle cx="40" cy="40" r="35" class="timer-bg"></circle>
+                        <circle cx="40" cy="40" r="35" id="timer-progress" class="timer-progress"></circle>
+                    </svg>
+                    <span id="timer-text" class="timer-text">30</span>
+                </div>
+            </div>
+            
+            <div class="quiz">
+                <h2 id="question">Pergunta aparecerá aqui</h2>
+                <div class="category-badge" id="question-category"></div>
+                <div id="answer-buttons"></div>
+                <button id="next-btn" class="btn btn-primary">Próxima</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de Resultado e Ranking -->
+    <div id="result-screen" class="screen">
+        <div class="container">
+            <h1>🏆 Resultado Final</h1>
+            <div id="score-display"></div>
+            
+            <div class="result-stats">
+                <div class="stat-box">
+                    <span class="stat-value" id="correct-answers">0</span>
+                    <span class="stat-label">Acertos</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value" id="wrong-answers">0</span>
+                    <span class="stat-label">Erros</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value" id="accuracy">0%</span>
+                    <span class="stat-label">Precisão</span>
+                </div>
+            </div>
+            
+            <h2>📊 Ranking Geral</h2>
+            <div class="ranking-filters">
+                <button class="filter-btn active" onclick="filterRanking('all')">Todos</button>
+                <button class="filter-btn" onclick="filterRanking('facil')">Fácil</button>
+                <button class="filter-btn" onclick="filterRanking('medio')">Médio</button>
+                <button class="filter-btn" onclick="filterRanking('dificil')">Difícil</button>
+            </div>
+            <div id="ranking-list"></div>
+            
+            <div class="result-buttons">
+                <button class="btn btn-primary" onclick="restartQuiz()">Jogar Novamente</button>
+                <button class="btn btn-secondary" onclick="logout()">Sair</button>
+                <button class="btn btn-danger" onclick="clearRanking()">Limpar Ranking</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de Estatísticas -->
+    <div id="stats-screen" class="screen">
+        <div class="container">
+            <h1>📊 Estatísticas Gerais</h1>
+            <div id="general-stats"></div>
+            <button class="btn btn-primary" onclick="showScreen('login-screen')">Voltar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>        
+</body>
+</html>
